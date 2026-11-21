@@ -1,0 +1,1440 @@
+<!DOCTYPE html> 
+<html lang="ja"> 
+    <head> 
+        <meta charset="UTF-8"> 
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+        <title>日本教育版</title> 
+        <style>
+           
+               .control-panel {
+      display: flex;
+      gap: 40px;
+      padding: 40px;
+      background: #34495e;
+      border-radius: 20px;
+      box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
+    }
+
+    .action-btn {
+      width: 220px;
+      height: 120px;
+      font-size: 24px;
+      font-weight: 900;
+      border: none;
+      border-radius: 15px;
+      cursor: pointer;
+      text-transform: uppercase;
+      transition: all 0.05s ease;
+      outline: none;
+      user-select: none;
+    }
+
+    /* SAVE ボタンのデザイン */
+    .save-btn { 
+      background-color: #e74c3c; 
+      color: white;
+      box-shadow: 0 15px 0 #b33023; 
+    }
+    .save-btn:active {
+      transform: translateY(10px);
+      box-shadow: 0 5px 0 #b33023;
+    }
+
+    /* LOAD ボタンのデザイン */
+    .load-btn { 
+      background-color: #f1c40f; 
+      color: #333;
+      box-shadow: 0 15px 0 #c29d0b; 
+    }
+    .load-btn:active {
+      transform: translateY(10px);
+      box-shadow: 0 5px 0 #c29d0b;
+    }
+
+            /* 1. 画面追従UIの土台 */
+.fixed-ui { 
+    position: fixed; 
+    top: 20px; 
+    z-index: 10000; 
+}
+/* 2. レトロモード用のフィルター */
+
+        body { 
+            margin: 0; 
+            padding: 40px 20px; 
+            background-color: #0b0f19; 
+            color: #e2e8f0; 
+            /* 既存の body セレクタをこのように変更 */
+/* 既存の body セレクタをこのように変更 */
+body { 
+    margin: 0; 
+    padding: 40px 20px; 
+    background-color: #0b0f19; 
+    /* font-family: ... を削除し、以下を追加 */
+    font-family: var(--main-font, 'Helvetica Neue', Arial, sans-serif);
+    color: #e2e8f0; 
+    /* ...その他の設定はそのまま */
+}
+            max-width: 800px; 
+            margin: 0 auto; 
+            position: relative;
+            transition: background-color 0.3s ease, color 0.3s ease, transform 0.5s ease, filter 0.3s ease; 
+        } 
+         .novel-container { min-height: 400px; display: flex; flex-direction: column; justify-content: space-between; background: linear-gradient(to bottom, #1e293b, #0f172a); border-radius: 8px; padding: 20px; box-sizing: border-box; }
+        .novel-text-box { background: rgba(11, 15, 25, 0.8); border: 1px solid #6366f1; border-radius: 8px; padding: 15px; min-height: 100px; font-size: 18px; line-height: 1.6; cursor: pointer; margin-top: 15px; }
+        .novel-speaker { font-weight: bold; color: #a855f7; margin-bottom: 5px; }
+        .choice-container { display: flex; flex-direction: column; gap: 10px; margin-bottom: 10px; width: 100%; }
+        .choice-btn { background: #1e1b4b; border: 1px solid #6366f1; color: white; padding: 12px; border-radius: 6px; cursor: pointer; text-align: left; font-size: 16px; transition: background 0.2s; }
+        .choice-btn:hover { background: #312e81; border-color: #a855f7; }
+
+        /* 枠線エフェクトの基本 */
+.hover-effect { transition: all 0.3s ease; border: 2px solid transparent; }
+
+ /* モードのスタイル */
+        .mode-monochrome { filter: grayscale(100%); background-color: #1a1a1a; }
+        .mode-retro { filter: sepia(80%) contrast(1.1); background-color: #dcd7c9; color: #444; }
+
+          /* おしゃれなボタンのスタイル */
+        .btn {
+            padding: 15px 30px;
+            margin: 10px;
+            font-size: 16px;
+            font-weight: bold;
+            border: none;
+            border-radius: 50px; /* 角を丸く */
+            cursor: pointer;
+            color: white;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+
+         .btn-mono { background: linear-gradient(135deg, #475569, #1e293b); }
+        .btn-retro { background: linear-gradient(135deg, #d4a373, #a68a64); }
+        .btn-reset { background: linear-gradient(135deg, #ef4444, #991b1b); }
+
+        /* ホバー時の動き */
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.4);
+            filter: brightness(1.2);
+        }
+        .btn:active { transform: translateY(1px); }
+
+/* 配色パターン（CSS変数で管理） */
+.border-cyber { --h-color: #00f2ff; --s-color: #0077ff; }
+.border-party { --h-color: #ff00ff; --s-color: #00ff00; }
+.border-fire  { --h-color: #ffaa00; --s-color: #ff0000; }
+
+/* ホバー時の発光効果 */
+.hover-effect:hover {
+    border-color: var(--h-color);
+    box-shadow: 0 0 15px var(--h-color), inset 0 0 5px var(--s-color);
+}
+
+              .dragon-logo {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            width: 80px;
+            height: 80px;
+            fill: #ffffff;
+            filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.5));
+            pointer-events: none;
+        } 
+
+        /* 設定パネルのデザイン */
+#settings-panel {
+    display: none; position: fixed; top: 60px; right: 20px; z-index: 10000;
+    background: rgba(21, 28, 44, 0.95); padding: 15px; border-radius: 8px;
+    border: 1px solid #3b82f6; font-size: 14px;
+}
+/* 設定ボタン */
+#settings-btn {
+    position: fixed; top: 20px; right: 120px; z-index: 10000;
+    background: #1e293b; color: white; border: 1px solid #3b82f6;
+    padding: 5px 10px; border-radius: 4px; cursor: pointer;
+}
+        
+        .event-timer-bar {
+    position: fixed; /* ページ内のどこにいても上に表示 */
+    top: 0;
+    left: 0;
+    width: 0%;
+    height: 4px;
+    background: linear-gradient(90deg, #ef4444, #f59e0b);
+    z-index: 99999; /* 他の要素より確実に上に */
+    transition: width 1s linear;
+}
+
+        #particle-canvas {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            z-index: -1; pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        #password-gate {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            background-color: #0b0f19;
+            display: flex; justify-content: center; align-items: center;
+            z-index: 99999; opacity: 1; visibility: visible;
+            transition: opacity 0.5s ease, visibility 0.5s ease;
+        }
+
+        .gate-box {
+            text-align: center; background: #151c2c; padding: 40px; border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.1); box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            max-width: 400px; width: 85%; position: relative; z-index: 100000;
+        }
+
+        .gate-box h2 {
+            color: #ffffff; margin-bottom: 20px; border-left: none; padding-left: 0; margin-top: 0;
+            font-size: 22px; text-shadow: 0 0 10px rgba(59, 130, 246, 0.5);
+        }
+
+        .password-input {
+            width: 100%; padding: 12px; font-size: 18px; background-color: #0b0f19;
+            border: 2px solid #3b82f6; border-radius: 8px; color: #ffffff; text-align: center;
+            outline: none; box-sizing: border-box; margin-bottom: 20px; letter-spacing: 4px;
+            position: relative; z-index: 100001;
+        }
+
+        /* 新規追加イベント用 */
+@keyframes pulse-screen { 0% { transform: scale(1); } 50% { transform: scale(1.02); } 100% { transform: scale(1); } }
+.event-rainbow-text { animation: rainbow-color 0.1s infinite; }
+@keyframes rainbow-color { 0% { color: red; } 33% { color: lime; } 66% { color: blue; } }
+
+        .cyber-clock {
+    position: fixed; /* これによりスクロールしても右上に固定されます */
+    top: 20px; 
+    right: 20px;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 14px; 
+    font-weight: bold;
+    color: #3b82f6;
+    background: rgba(21, 28, 44, 0.85);
+    padding: 8px 12px; 
+    border-radius: 6px;
+    border: 1px solid rgba(59, 130, 246, 0.3);
+    box-shadow: 0 0 10px rgba(59, 130, 246, 0.2);
+    z-index: 10000; /* 常に最前面に表示 */
+}
+
+        .gate-btn {
+            position: relative; width: 100%; padding: 14px; background: #0b0f19; color: white;
+            font-size: 16px; font-weight: bold; border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px; cursor: pointer; overflow: hidden; transition: transform 0.2s, box-shadow 0.3s;
+            z-index: 100002;
+        }
+
+        .gate-btn::before {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; border-radius: 8px; padding: 2px;
+            background: linear-gradient(135deg, #4285f4, #9b51e0, #ea4335, #fbbc05);
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor; mask-composite: exclude; opacity: 0; transition: opacity 0.3s ease;
+            pointer-events: none; z-index: -1;
+        }
+
+        .gate-btn:hover::before { opacity: 1; }
+        .gate-btn:hover { transform: translateY(-2px); box-shadow: 0 0 15px rgba(155, 81, 224, 0.4); }
+        
+        h1 { text-align: center; border-bottom: 3px solid #3b82f6; padding-bottom: 10px; margin-bottom: 40px; color: #ffffff; text-shadow: 0 0 10px rgba(59, 130, 246, 0.5); transition: all 0.3s ease; } 
+        h2 { margin-top: 50px; color: #6366f1; border-left: 4px solid #6366f1; padding-left: 10px; }
+        h3 { color: #f1f5f9; font-size: 16px; }
+        p { margin-bottom: 20px; line-height: 1.8; color: #94a3b8; }
+
+        .horizontal-container { display: flex; justify-content: space-between; gap: 20px; margin: 40px 0; flex-wrap: wrap; } 
+
+        .box, .animated-button, .mega-button, .info-box {
+            position: relative; background: #151c2c !important; border-radius: 12px; overflow: visible !important; 
+            border: 1px solid rgba(255, 255, 255, 0.1); transition: transform 0.2s, box-shadow 0.3s;
+        }
+
+        .box::before, .animated-button::before, .mega-button::before, .info-box::before {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; border-radius: 12px; padding: 2px; 
+            background: linear-gradient(135deg, #4285f4, #9b51e0, #ea4335, #fbbc05); 
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor; mask-composite: exclude; opacity: 0; transition: opacity 0.3s ease; pointer-events: none;
+        }
+
+        .box:hover::before, .animated-button:hover::before, .mega-button:hover::before, .info-box:hover::before { opacity: 1; }
+        .box:hover, .animated-button:hover, .mega-button:hover, .info-box:hover { transform: translateY(-2px); box-shadow: 0 0 20px rgba(155, 81, 224, 0.3); }
+        .box:active, .animated-button:active, .mega-button:active { transform: scale(0.97); } 
+
+        .box { flex: 1; min-width: 150px; color: #ffffff; padding: 20px; text-align: center; cursor: pointer; user-select: none; } 
+
+        .badge {
+            position: absolute; top: -10px; right: -10px; background-color: #dc3545; color: white;
+            font-size: 13px; font-weight: bold; width: 22px; height: 22px; line-height: 22px; 
+            text-align: center; border-radius: 50%; box-shadow: 0 0 10px #dc3545; display: none; z-index: 99;
+        }
+
+        .animated-button { display: block; text-align: center; color: white; padding: 18px; text-decoration: none; font-weight: bold; margin-top: 40px; font-size: 18px; }
+        .mega-button { flex: 1; min-width: 160px; padding: 15px; color: #fff; font-weight: bold; border: 1px solid rgba(255, 255, 255, 0.1); cursor: pointer; }
+
+        .info-box { padding: 30px; margin: 40px auto; max-width: 500px; text-align: center; }
+        .info-box h2 { color: #ffffff; font-size: 20px; margin-top: 0; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 2px solid #a855f7; border-left: none; padding-left: 0; }
+        .info-box p { color: #94a3b8; font-size: 14px; margin: 0; }
+
+        body.safe-mode { background-color: #f5f7fa !important; color: #333333 !important; transform: none !important; filter: none !important; }
+        body.safe-mode #particle-canvas { opacity: 0; }
+        body.safe-mode h1, body.safe-mode h2, body.safe-mode p { color: #333333 !important; text-shadow: none !important; border-color: #333333 !important; }
+
+        #stop-overlay {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: #000000; color: #ff3333; display: flex; justify-content: center; align-items: center;
+            font-size: 24px; font-weight: bold; z-index: 1000000; display: none;
+        }
+
+        /* 枠線エフェクトの基本設定 */
+.hover-effect {
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+}
+
+ #shootCanvas { background: #000; display: block; margin: 0 auto; border-radius: 8px; max-width: 100%; }
+
+/* 配色パターン */
+.border-cyber { --h-color: #00f2ff; --s-color: #0077ff; } /* 青と水色と白 */
+.border-party { --h-color: #ff00ff; --s-color: #00ff00; } /* ネオンピンクと緑 */
+.border-fire { --h-color: #ffaa00; --s-color: #ff0000; } /* 炎のようなオレンジと赤 */
+
+/* ホバー時のスタイル */
+.hover-effect:hover {
+    border-color: var(--h-color);
+    box-shadow: 0 0 10px var(--h-color), inset 0 0 5px var(--s-color);
+}
+
+        #event-banner {
+            position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
+            background: rgba(220, 53, 69, 0.9); color: white; padding: 15px 30px;
+            border-radius: 30px; font-weight: bold; font-size: 20px; z-index: 9999;
+            box-shadow: 0 0 20px rgba(220, 53, 69, 0.6); display: none;
+            animation: pulse 1.5s infinite;
+        }
+        @keyframes pulse { 0% { scale: 1; } 50% { scale: 1.05; } 100% { scale: 1; } }
+
+        .event-party { animation: rainbow-bg 0.5s infinite !important; }
+        @keyframes rainbow-bg {
+            0% { background-color: #4a1525; } 25% { background-color: #154a3a; }
+            50% { background-color: #15254a; } 75% { background-color: #4a4515; }
+        }
+        
+        /* セピア・モノクロ・ネガ反転用のクラス */
+        .event-sepia { filter: sepia(1) contrast(1.2) !important; }
+        .event-mono { filter: grayscale(1) brightness(0.8) !important; }
+        .event-invert { filter: invert(1) !important; }
+
+        .falling-text {
+            position: fixed; font-size: 24px; pointer-events: none; z-index: 9998;
+            animation: fall linear forwards;
+        }
+        @keyframes fall { to { transform: translateY(105vh); } }
+         /* ④ 放置ゲーム用のスタイル */
+        .clicker-container { text-align: center; padding-top: 20px; }
+        .click-target { width: 120px; height: 120px; background: radial-gradient(circle, #f59e0b, #d97706); border-radius: 50%; margin: 20px auto; cursor: pointer; display: flex; justify-content: center; align-items: center; font-size: 40px; box-shadow: 0 0 20px #f59e0b; user-select: none; transition: transform 0.05s; }
+        .click-target:active { transform: scale(0.92); }
+        .shop-item { display: flex; justify-content: space-between; align-items: center; background: #0b0f19; padding: 12px; border-radius: 8px; margin: 10px 0; border: 1px solid rgba(255,255,255,0.05); }
+
+        .cursor-trail {
+    position: fixed;
+    width: 8px; height: 8px;
+    background: radial-gradient(circle, #ff00ff, #00ffff);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9999999;
+    transition: opacity 0.5s ease;
+}
+        </style>
+    </head>
+<body>
+    <button id="settings-btn" onclick="toggleSettings()">設定</button>
+<div id="settings-panel">
+    <div style="margin-top:15px; border-top:1px solid #3b82f6; padding-top:10px;">
+    <label>シークレットコード: <input type="text" id="secret-code" style="width:80px;"></label>
+    <button onclick="checkSecret()">適用</button>
+</div>
+<div style="margin-top: 15px; border-top:1px solid #3b82f6; padding-top:10px;">
+</div>
+</label>
+    <label><input type="checkbox" id="no-stealth-white"> ステルスで画面を白くしない</label><br>
+        </select>
+    </label>
+</div>
+
+    <div id="cyberClock" class="cyber-clock">00:00:00</div>
+
+     <svg class="dragon-logo" viewBox="0 0 100 100">
+        <path d="M45,10 C42,15 35,12 30,18 C25,24 28,32 22,35 C15,38 10,32 5,42 C12,42 16,46 20,43 C24,40 25,35 30,36 C28,42 22,46 18,52 C24,52 30,48 34,44 C32,50 28,55 24,62 C32,58 38,52 42,46 C40,54 36,62 30,72 C40,66 48,58 52,48 C50,58 44,68 36,82 C48,74 58,64 62,50 C65,40 60,32 65,24 C70,16 80,20 85,12 C78,16 74,12 70,18 C66,24 68,32 62,35 C58,37 54,32 50,34 C54,28 56,22 54,16 C52,22 48,25 45,10 Z M65,48 C72,52 82,50 90,56 C82,56 76,58 72,62 C78,65 86,68 95,74 C84,72 76,70 70,66 C68,72 64,80 58,88 C62,80 64,74 65,66 C60,64 54,64 48,66 C54,62 60,60 65,48 Z" />
+    </svg>
+
+    <div id="password-gate">
+        <div class="gate-box">
+            <h2>認証が必要です</h2>
+            <p style="color: #94a3b8; margin-bottom: 15px;">パスワードを入力</p>
+            <input type="password" id="passInput" class="password-input" placeholder="••••" maxlength="8">
+            <button class="gate-btn" type="button" onclick="checkPassword()">完了</button>
+        </div>
+    </div>
+
+    <canvas id="particle-canvas"></canvas>
+
+    <h1 id="main-title">キャラクター図鑑（淫夢中学校）</h1>
+    <h3>せちゅな、えいるのみURLの共有が許可されています。せちゅな、えいる以外の人がURLを他人に共有するとトラブルの発展につながる危険性があります。ご了承ください。</h3>
+
+    <div class="char-section">
+        <h2>カビゴン（んんし）</h2><h3>淫夢度：<span class="star-stat">★★★☆☆</span> 変態度：<span class="star-stat">★★★☆☆</span> ガイジ度：<span class="star-stat">★★☆☆☆</span></h3><p class="char-desc">物理的に距離感がわからない実はやっているやつ</p>
+        <h2>たいようさーん</h2><h3>淫夢度：<span class="star-stat">★★☆☆☆</span> 変態度：<span class="star-stat">★☆☆☆☆</span> ガイジ度：<span class="star-stat">★★★☆☆</span></h3><p class="char-desc">こうじのことが好きなゲイ。オウム返しするのが得意。</p>
+        <h2>あいっすけぇ（あいすけ）</h2><h3>淫夢度：<span class="star-stat">★☆☆☆☆</span> 変態度：<span class="star-stat">★★★★★</span> ガイジ度：<span class="star-stat">★★★★★</span></h3><p class="char-desc">そうすけと表裏一体、ロリコンでいつも大声歌っている。</p>
+        <h2>せちゅな</h2><h3>淫夢度：<span class="star-stat">★★★☆☆</span> 変態度：<span class="star-stat">☆☆☆☆☆</span> ガイジ度：<span class="star-stat">☆☆☆☆☆</span></h3><p class="char-desc">自称「淫夢厨じゃない」淫夢厨</p>
+        <h2>金...床...？？（カンカンカン）えいる</h2><h3>淫夢度：<span class="star-stat">★★★★★</span> 変態度：<span class="star-stat">☆☆☆☆☆</span> ガイジ度：<span class="star-stat">★☆☆☆☆</span></h3><p class="char-desc">金..口にしたら潰される</p>
+        <h2>そうすげい</h2><h3>淫夢度：<span class="star-stat">★☆☆☆☆</span> 変態度：<span class="star-stat">★☆☆☆☆</span> ガイジ度：<span class="star-stat">★★★★☆</span></h3><p class="char-desc">最近自認ゲイになったVチューバー好き。「どういうこと？」が口癖</p>
+        <h2>仲あら</h2><h3>淫夢度：<span class="star-stat">★★★☆☆</span> 変態度：<span class="star-stat">★★★★☆</span> ガイジ度：<span class="star-stat">★★☆☆☆</span></h3><p class="char-desc">淫夢第一被害者。自分では健全だと思っている。だが手遅れ。名言は「いくうううううう（えぐううううう）」</p>
+        <h2>ステンレス大後輩</h2><h3>淫夢度：<span class="star-stat">★★☆☆☆</span> 変態度：<span class="star-stat">★☆☆☆☆</span> ガイジ度：<span class="star-stat">☆☆☆☆☆</span></h3><p class="char-desc">髪の毛がもうステンレs...。最近淫夢と化している</p> 
+        <h2>野獣先輩(首里城)</h2><h3>淫夢度：<span class="star-stat">★☆☆☆☆</span> 変態度：<span class="star-stat">☆☆☆☆☆</span> ガイジ度：<span class="star-stat">★★★★☆</span></h3><p class="char-desc">ブレインロットに洗脳された男</p>
+        <h2>オナミー</h2><h3>淫夢度：<span class="star-stat">★★☆☆☆</span> 変体度：<span class="star-stat">★★★★★</span> ガイジ度：<span class="star-stat">☆☆☆☆☆</span> 勤務度：<span class="star-stat">★★★★★</span></h3><p class="char-desc">見かけたら「勤務ご苦労さまです！」と声を掛けると喜ぶ。淫夢厨勤務中 このサイトを守った英雄！！！</p>
+        <h2>リホー（ワホー）</h2><h3>淫夢度：<span class="star-stat">★☆☆☆☆</span> 変態度：<span class="star-stat">★★☆☆☆</span> ガイジ度：<span class="star-stat">☆☆☆☆☆</span></h3><p class="char-desc">女子の中では一番の変態らしい...🤔</p>
+        <h2>ここミー</h2><h3>淫夢度：<span class="star-stat">★☆☆☆☆</span> 変態度：<span class="star-stat">☆☆☆☆☆</span> ガイジ度：<span class="star-stat">☆☆☆☆☆</span></h3><p class="char-desc">最近せちゅなから淫夢を教わっているらしい。</p>
+        <h2>俺（どんぐり）</h2><h3>淫夢度：<span class="star-stat">★★★★★</span> 変態度：<span class="star-stat">★★★★★</span> ガイジ度：<span class="star-stat">★★★★★</span></h3><p class="char-desc">ディルドは臭え（ディルド惑星）から来ました。淫夢とは無関係の超健全どんぐり</p>
+    </div>
+
+    <h2>人物の追加や案、メッセージ送信の場合</h2><p>人物の追加があればあだ名と淫夢度、変態度、ガイジ度を入力し、特徴などを送信者の名前とともに送ってください。過度な悪口などはお控えください。あくまでも知人同士での遊びです。</p>
+    
+    <div class="horizontal-container">
+        <div class="box" onclick="window.open('https://forms.gle/dtrnB7vC89ng4er67')">人物や修正部分、音楽追加、メッセージ送信</div>
+        <div class="box" onclick="openPage('notice', 'https://docs.google.com/forms/d/e/1FAIpQLSf9Oz8OxEH9zsbDHKutpGe5VVChyAahG-acN4qRxh59H-3kZA/viewform')"><span class="badge" id="badge-notice">!</span>〜重要なお知らせ〜</div>
+        <div class="box" onclick="openPage('news', 'https://forms.gle/hPu17sgxCQnwoX1c7')"><span class="badge" id="badge-news">!</span>最新情報！</div>
+        <div class="box" onclick="openPage('qa', 'https://docs.google.com/forms/d/e/1FAIpQLSdC81DBTobxKuKIT0fxS7Fjoyx7KyRx2iPPZrD8FYQAzUOq9Q/viewform')"><span class="badge" id="badge-qa">!</span>質問コーナー</div>
+    </div>
+
+    <a href="https://zippy-centaur-be2b72.netlify.app" target="_blank" rel="noopener" class="animated-button">淫夢検定はこちら</a>
+
+    <div class="info-box">
+        <h2>バージョン1.15</h2>
+        <p>〜音楽〜</p>
+    </div>
+       <div>
+        <button class="btn btn-mono" onclick="setMode('mode-monochrome')">モノクロ</button>
+        <button class="btn btn-retro" onclick="setMode('mode-retro')">レトロ化</button>
+        <button class="btn btn-reset" onclick="setMode('reset')">リセット</button>
+    </div>
+    <div class="info-box">
+        <h1>〜ニュース〜</h1>
+        <h3>音楽の不具合が発生し修正に時間がかかりました。</h3>
+    </div>
+    
+    <h1>音楽コーナー※えちちちいいなものもあるので注意</h1>
+    <button onclick="stopAllHtmlAudio()" style="background-color: #dc3545; color: white; font-weight: bold; padding: 12px 24px; border: none; border-radius: 6px; cursor: pointer; margin-bottom: 20px; display: block; box-shadow: 0 4px 10px rgba(220, 53, 69, 0.3);">すべての音楽を停止</button>
+    <div class="horizontal-container">
+        <button class="mega-button sound-btn" onclick="playSussySound()">ぶーちかっちー🎵</button>
+        <button class="mega-button sound-btn" onclick="Sound()">saleman🎵</button>
+        <button class="mega-button sound-btn" onclick="FunkSound()">Fonk🎵</button>
+        <button class="mega-button sound-btn" onclick="Cortisol()">コルチゾール🎵</button>
+        <button class="mega-button sound-btn" onclick="Fortnite()">Fortnite🎵</button>
+        <button class="mega-button sound-btn" onclick="SokinTV()">S◯kinTV🎵</button>
+        <button class="mega-button sound-btn" onclick="waho()">ワホー🎵</button>
+        <button class="mega-button sound-btn" onclick="YAJU()">YAJUシャイニング🎵</button>
+        <button class="mega-button sound-btn" onclick="nyan()">ニャン1,2,3🎵</button>
+        <button class="mega-button sound-btn" onclick="YAJUU()">YAJU&U🎵</button>
+        <button class="mega-button sound-btn" onclick="air()">HAKARI🎵</button>
+        <button class="mega-button sound-btn" onclick="mom()">チャイニーズ🎵</button>
+        <button class="mega-button sound-btn" onclick="donguri()">oioioi🎵</button>
+        <button class="mega-button sound-btn" onclick="esk()">Coral🎵</button>
+        <button class="mega-button sound-btn" onclick="omae()">yiwang🎵</button>
+        <button class="mega-button sound-btn" onclick="fps()">gigachad🎵</button>
+    </div>
+    <h1>ゲームセンター</h1>
+
+     <div id="game-novel" class="game-window">
+        <h3>インム中学校のアドベンチャー</h3>
+        <p>あなたの選択でストーリーが変わるマルチエンディングノベル。</p>
+        <div class="novel-container">
+            <div id="novelChoices" class="choice-container"></div>
+            <div class="novel-text-box" onclick="advanceNovel()">
+                <div id="novelSpeaker" class="novel-speaker">???</div>
+                <div id="novelText">画面をクリックしてストーリーを始めるゾ。</div>
+            </div>
+        </div>
+        <button class="btn" onclick="initNovel()">最初からやり直す</button>
+    </div>
+    <div id="game-clicker" class="game-window">
+        <h2>ページが更新されてしまうとどんぐりでのデータが消えます！</h2>
+        <h3>どんぐり惑星のクリッカー（放置）</h3>
+        <p>真ん中の大どんぐりをクリックして回収！自動回収施設を買うと放置していても爆速で増えます。</p>
+        <div class="clicker-container">
+            <div style="font-size: 28px; font-weight: bold; color: #f59e0b;">所持どんぐり: <span id="clickerCount">0</span> 🌰</div>
+            <div style="color: #94a3b8; font-size: 14px; margin-top: 5px;">毎秒の自動生産量: <span id="clickerAps">0</span>/秒</div>
+            
+            <div class="click-target" onclick="clickTarget()">🌰</div>
+
+            <h3>🏢 自動化ショップ</h3>
+            <div class="shop-item">
+                <div><strong>どんぐり拾い人</strong> (毎秒 +1 🌰)<br><small style="color: #94a3b8;">価格: <span id="cost1">15</span> 🌰</small></div>
+                <button class="btn" onclick="buyUpgrade(1)">購入</button>
+            </div>
+            <div class="shop-item">
+                <div><strong>どんぐり自動吸引機</strong> (毎秒 +8 🌰)<br><small style="color: #94a3b8;">価格: <span id="cost2">100</span> 🌰</small></div>
+                <button class="btn" onclick="buyUpgrade(2)">購入</button>
+            </div>
+            <div class="shop-item">
+                <div><strong>ディルド惑星製工場</strong> (毎秒 +50 🌰)<br><small style="color: #94a3b8;">価格: <span id="cost3">1145</span> 🌰</small></div>
+                <button class="btn" onclick="buyUpgrade(3)">購入</button>
+            </div>
+        </div>
+    </div>
+     <div class="horizontal-container">
+        <div class="box" onclick="openPage('qa', 'https://reliable-lolly-94049b.netlify.app')"><span class="badge" id="badge-qa">!</span>新しいゲームはこちら！！</div>
+    </div>
+    <audio id="myAudio" src="audio.mp3"></audio>
+    <audio id="sussyAudio" src="https://www.myinstants.com/media/sounds/sussy-hub-intro.mp3"></audio>
+    <audio id="Audio" src="https://www.myinstants.com/media/sounds/salesman-squid-game-edit-audio-blah-phonk.mp3"></audio>
+    <audio id="Funk" src="https://www.myinstants.com/media/sounds/bad-ending-funk.mp3"></audio>
+    <audio id="Cortisol" src="https://www.myinstants.com/media/sounds/low-cortisol-song.mp3"></audio>
+    <audio id="Fortnite" src="https://www.myinstants.com/media/sounds/number-one-victory-royale-yeah-fortnite-we-bout-to-get-down.mp3"></audio>
+    <audio id="SokinTV" src="https://www.myinstants.com/media/sounds/s0xkintv-avday.mp3"></audio>
+    <audio id="waho" src="https://www.myinstants.com/media/sounds/waho_vQNiKTx.mp3"></audio>
+    <audio id="YAJU" src="https://www.myinstants.com/media/sounds/ye-swu-xian-bei-shiyaininguikisugita.mp3"></audio>
+    <audio id="nyan" src="https://www.myinstants.com/media/sounds/nya_2xyALFL.mp3"></audio>
+    <audio id="nihon" src="/Users/ainanninga/Music/Music/Media.localized/Music/Unknown Artist/Unknown Album/完成4824.mp3"></audio>
+    <audio id="rosia" src="https://www.myinstants.com/media/sounds/te-n.mp3"></audio>
+    <audio id="doitu" src="/Users/ainanninga/Music/Music/Media.localized/Music/Unknown Artist/Unknown Album/和訳歌詞付き 「エリカ⧸Erika」ドイツ軍歌⧸German Military Song.mp3"></audio>
+    <audio id="kado" src="/Users/ainanninga/Music/Music/Media.localized/Music/Unknown Artist/Unknown Album/ゲームのカード落としちゃった　powerful.mp3"></audio>
+    <audio id="YAJUU" src="https://www.myinstants.com/media/sounds/yaju-u.mp3"></audio>
+    <audio id="fps" src="https://www.myinstants.com/media/sounds/gigachad-phonk-house.mp3"></audio>
+    <audio id="esk" src="https://www.myinstants.com/media/sounds/coral-chorus-but-only-the-meme-part.mp3"></audio>
+    <audio id="air" src="https://www.myinstants.com/media/sounds/hakari-meme.mp3"></audio>
+    <audio id="mom" src="https://www.myinstants.com/media/sounds/asian-gong-music.mp3"></audio>
+    <audio id="omae" src="https://www.myinstants.com/media/sounds/chinese-yiwang-yiwang-song-1.mp3"></audio>
+    <audio id="donguri" src="https://www.myinstants.com/media/sounds/red-larva.mp3"></audio>
+
+    <div id="teacher-stealth-zone">
+        <h1>先生が急に後ろにきてベーやべー（やばい）状態になった時のためのコーナー</h1>
+        <h2>日本の教育と歴史について</h2>
+        <p>日本の教育としてこの項目では日本における教育を解説する。</p>
+        <p>日本における「教育」は、単に学校教育という狭義に留まらず、家庭教育や社会教育（生涯学習）などもその意味に含まれる。</p>
+        <p>英語の「education」、日本語の「教育」の語源である「教」は「励まし模倣させること Foro」、 「育`」は「子どもが生まれること」または「子供を養うこと」を意味している。</p>
+        <p>この語が日本で使用されるようになったのは江戸時代以降と言われており、それ以前の日本や中国では「教化」という語が用いられていた。現在の日本語では「教化」の概念を英語の「indoctrination」の訳語に用いてる。</p>
+        <h3>概要</h3>
+        <p>日本の教育は、文部科学省が所管しており教育基本法に則っている。</p>
+        <p>日本は欧米に次いで世界的には比較的早い明治期から、大正、昭和〜平成期と、明治維新以降近代的な学校教育の実施、制度を整備し、公教育、一般教育、義務教育を実施した。欧米以外で, 母語による高等教育を実現している数少ない国でもある。ここら辺からは全部俺が適当に書いていく。上に書いてあるのが同じなのは何も書くことがなかったからです。このサイトを作ろうと思ったきっかけは、最初にゲームの詐欺をしてアカウントを乗っ取るために作ろうとしてた。けど学校でも何かに使いたいな。って思ってたらいいこと思いついた。知人の図鑑を作ろうと思って図鑑だけで暇しないように「検定、音楽」を追加した。これからもたくさんのアップデートをしていきます！</p>
+    </div>
+
+    <script>
+        
+        
+
+// 5分(300,000ミリ秒)ごとに自動実行するタイマーを開始
+function startAutoEventSystem() {
+    if (autoEventTimer) clearInterval(autoEventTimer);
+    autoEventTimer = setInterval(() => {
+        runRandomEvent();
+    }, 300000);
+}
+
+// ページ読み込み時にタイマーを開始
+window.onload = function() {
+    startAutoEventSystem();
+    // ここに既存の初期化処理があれば続けて記述
+};
+
+// イベント停止用関数
+function stopAllEventsNow() {
+    // 1. 自動タイマーを止める
+    clearInterval(autoEventTimer);
+    
+    // 2. 画面上の演出用タイマーを全部消す
+    eventIntervals.forEach(t => clearInterval(t));
+    eventIntervals = [];
+    
+    // 3. 画面の見た目を元に戻す
+    document.body.style.transform = "none";
+    document.body.style.filter = "none";
+    document.body.style.animation = "none";
+    
+    const banner = document.getElementById('event-banner');
+    if (banner) banner.style.display = 'none';
+    
+    alert("イベントを完全に停止しました。");
+}
+
+// イベント実行ロジック
+function runRandomEvent() {
+    const eventNumber = Math.floor(Math.random() * 20) + 1;
+    const banner = document.getElementById('event-banner');
+    if (!banner) return;
+    
+    banner.style.display = 'block';
+    
+    // イベントIDごとにロジックを分岐
+    switch(eventNumber) {
+        case 1: banner.innerText = "イベント①：画面上下大反転！"; document.body.style.transform = "rotate(180deg)"; break;
+        case 2: banner.innerText = "イベント②：どんぐり大豪雨！"; startRain("🌰"); break;
+        // ... (ここに先ほどのswitch文の各ケースを記述)
+    }
+}
+
+        // --- 追加実装: 5分ごとのイベント自動発動 & 停止機能 ---
+
+// 5分(300,000ミリ秒)ごとにランダムイベントを実行
+let autoEventInterval = setInterval(() => {
+    console.log("5分経過：イベント発動！");
+    runRandomEvent();
+}, 300000); 
+
+// イベント停止ボタン用の関数
+function stopAllEventsNow() {
+    // 1. 自動実行タイマーを解除
+    clearInterval(autoEventInterval);
+    
+    // 2. 現在実行中のイベントをすべてクリア
+    clearCurrentEvents();
+    
+    // 3. バナーを非表示にする
+    const banner = document.getElementById('event-banner');
+    if(banner) banner.style.display = 'none';
+    
+    alert("全てのイベント自動発動を停止し、現在の演出をリセットしました。");
+    
+    // 必要であれば、再度自動発動を有効にしたい時のために再起動ボタンを作ることも可能ですが、
+    // 今回は「停止」を優先しています。
+}
+
+        function runRandomEvent() {
+            const eventNumber = Math.floor(Math.random() * 20) + 1;
+            const banner = document.getElementById('event-banner');
+            banner.style.display = 'block';
+
+            switch(eventNumber) {
+                case 1: banner.innerText = "イベント①：画面上下大反転！"; document.body.style.transform = "rotate(180deg)"; break;
+                case 2: banner.innerText = "イベント②：どんぐり大豪雨！"; startRain("🌰"); break;
+                case 3: banner.innerText = "イベント③：どんぐり重力反転"; document.body.style.flexDirection = "column-reverse"; break;
+                case 4: banner.innerText = "イベント④：全員ガイジ度カンスト！！"; setStars("★★★★★★★★★★(神)"); break;
+                case 5: banner.innerText = "イベント⑤：タイトルのバグ化"; startTitleBug(); break;
+                case 6: banner.innerText = "イベント⑥：画面が脈動する"; document.body.style.animation = "pulse-screen 1s infinite"; break;
+                case 7: banner.innerText = "イベント⑦：ボタンが逃げ出す！"; document.querySelectorAll('button').forEach(b => b.onmouseover = () => b.style.transform = `translate(${Math.random()*100-50}px, ${Math.random()*100-50}px)`); break;
+                case 8: banner.innerText = "イベント⑧：全員の名前が「どんぐり」になる"; renameAll("俺（どんぐり）"); break;
+                case 9: banner.innerText = "イベント⑨：文字が横にブレまくる"; startShake(); break;
+                case 10: banner.innerText = "イベント⑩：白い光が超高速移動"; particles.forEach(p => p.speedY = 15); break;
+                case 11: banner.innerText = "イベント⑪：文字が極彩色に乱舞"; document.body.style.color = "unset"; document.body.classList.add('event-rainbow-text'); break;
+                case 12: banner.innerText = "イベント⑫：サイケデリック発光"; document.body.style.filter = "hue-rotate(90deg) brightness(1.5)"; break;
+                case 13: banner.innerText = "イベント⑬：ネガポジ反転"; document.body.classList.add('event-invert'); break;
+                case 14: banner.innerText = "イベント⑭：星の雨！"; startRain("⭐"); break;
+                case 15: banner.innerText = "イベント⑮：タイトル荒ぶる"; startRotateTitle(); break;
+                case 16: banner.innerText = "イベント⑯：ボタン巨大化"; scaleButtons(1.25); break;
+                case 17: banner.innerText = "イベント⑰：説明文消滅"; hideDescriptions(); break;
+                case 18: banner.innerText = "イベント⑱：全員健全化"; setStars("☆☆☆☆☆(清純)"); break;
+                case 19: banner.innerText = "イベント⑲：どんぐり増殖バグ発生！"; document.getElementById('clickerCount').innerText = "999,999,999"; break;
+                case 20: banner.innerText = "イベント⑳：粒子巨大化"; particles.forEach(p => p.size = 20); break;
+            }
+        }
+
+     // 保存時のイメージ（簡略化）
+async function saveToFile(data) {
+  try {
+    const handle = await window.showSaveFilePicker({
+      suggestedName: 'my-data.json',
+      types: [{ description: 'JSONファイル', accept: { 'application/json': ['.json'] } }],
+    });
+    const writable = await handle.createWritable();
+    await writable.write(JSON.stringify(data));
+    await writable.close();
+  } catch (err) {
+    console.error("保存がキャンセルされました", err);
+  }
+}
+
+        function changeFont() {
+    const font = document.getElementById('font-selector').value;
+    document.body.style.setProperty('--main-font', font);
+    localStorage.setItem('selectedFont', font);
+}
+
+// ページ読み込み時に保存されたフォントを適用する処理
+document.addEventListener('DOMContentLoaded', () => {
+    const savedFont = localStorage.getItem('selectedFont');
+    if (savedFont) {
+        document.body.style.setProperty('--main-font', savedFont);
+        const selector = document.getElementById('font-selector');
+        if(selector) selector.value = savedFont;
+    }
+});
+
+/**
+ * ページを更新せずに、実行中の全てのイベント・タイマーを解除する関数
+ */
+function stopAllEventsSafely() {
+    // 1. 全てのインターバルタイマーを解除
+    // (ブラウザ上で動いている全てのsetIntervalを特定して停止します)
+    const highestId = window.setTimeout(() => {}, 0);
+    for (let i = 0; i < highestId; i++) {
+        window.clearTimeout(i);
+        window.clearInterval(i);
+    }
+
+    // 2. CSSの強制リセット（レトロ化やモノクロなどのフィルターを解除）
+    document.body.className = '';
+    document.body.style.filter = 'none';
+    document.body.style.transform = 'none';
+    document.body.style.backgroundColor = ''; // 必要に応じて元色に戻す
+
+    // 3. アニメーション系要素の非表示・停止
+    const eventElements = document.querySelectorAll('.event-layer, #event-banner, .particle-effect');
+    eventElements.forEach(el => el.style.display = 'none');
+
+    // 4. もし「どんぐりクリッカー」等の継続処理があれば手動で止める
+    // （変数 cps を 0 にすることで、裏側の数値増加を止めます）
+    if (typeof cps !== 'undefined') {
+        cps = 0;
+    }
+
+    console.log("すべてのイベントとタイマーを停止しました。");
+}
+
+         function setMode(mode) {
+            const body = document.body;
+            body.className = (mode === 'reset') ? '' : mode;
+        }
+
+        function toggleEvent() {
+    isEventEnabled = document.getElementById('event-toggle').checked;
+
+    if (!isEventEnabled) {
+        // --- ここでイベントを強制停止 ---
+        
+        // 1. タイマー（文字送りなど）を止める
+        if (currentEventTimer) {
+            clearTimeout(currentEventTimer);
+            currentEventTimer = null;
+        }
+
+        // 2. 音楽を止める
+        if (currentEventMusic) {
+            currentEventMusic.pause();
+            currentEventMusic.currentTime = 0; // 最初に戻す
+            currentEventMusic = null;
+        }
+
+        // 3. 画面の文字などを「通常」の状態に戻す
+        document.getElementById('novel-text-box').innerText = "通常モードに戻りました。";
+        console.log("イベント停止しました");
+    }
+}
+
+        function changeBorderColor(className) {
+    // ターゲット要素（ボタンとカード）をすべて取得
+    const elements = document.querySelectorAll('button, .mon-card');
+    
+    elements.forEach(el => {
+        // 既存の配色クラスを一度全て削除
+        el.classList.remove('border-cyber', 'border-party', 'border-fire');
+        // 選択されたクラスを追加
+        el.classList.add(className);
+        // ホバー効果用のクラスも付与
+        if (!el.classList.contains('hover-effect')) {
+            el.classList.add('hover-effect');
+        }
+    });
+    
+    // 設定を保存（リロードしても保持）
+    localStorage.setItem('borderSetting', className);
+}
+
+// ページ読み込み時に保存された設定を復元
+document.addEventListener('DOMContentLoaded', () => {
+    const savedBorder = localStorage.getItem('borderSetting');
+    if (savedBorder) {
+        changeBorderColor(savedBorder);
+    }
+});
+
+   function checkSecret() {
+    const inputField = document.getElementById('secret-code');
+    const code = inputField.value;
+
+    // 1. /donguri〇〇 の処理（先にチェック）
+    const donguriMatch = code.match(/^\/donguri(\d+)$/);
+    if (donguriMatch) {
+        const amount = parseInt(donguriMatch[1], 10);
+        acorns += amount;
+        updateClickerUI();
+        alert(`${amount} どんぐり獲得しました！`);
+        inputField.value = "";
+        return;
+    }
+
+    // 2. その他のコマンド処理
+    switch (code) {
+        case "114514":
+            document.body.style.cursor = "url(''), auto";
+            alert("隠しモード有効化！");
+            break;
+        case "634":
+            document.body.classList.add('event-party');
+            alert("スカイツリーモード起動！");
+            break;
+        case "67":
+            alert("レーザーポインター軌跡モード起動！");
+            window.addEventListener('mousemove', (e) => {
+                const trail = document.createElement('div');
+                trail.className = 'cursor-trail';
+                trail.style.left = e.clientX + 'px';
+                trail.style.top = e.clientY + 'px';
+                document.body.appendChild(trail);
+                setTimeout(() => trail.remove(), 500);
+            });
+             break;
+        case "99":
+            cps += 9999999999;
+            updateClickerUI();
+            alert("自動生産速度がアップしたゾ！");
+            break;
+        case "/reset":
+            if(confirm("本当にどんぐりを全て失いますか？")) {
+                acorns = 0;
+                cps = 0;
+                updateClickerUI();
+            }
+            break;
+        case "/speed":
+            cps += 1000;
+            updateClickerUI();
+            alert("自動生産速度がアップしたゾ！");
+            break;
+        case "/reset":
+            if(confirm("本当にどんぐりを全て失いますか？")) {
+                acorns = 0;
+                cps = 0;
+                updateClickerUI();
+            }
+            // 【面白い】ランダムな文字を降らせる
+        case "/rain":
+            alert("どんぐり雨だ！");
+            for(let i = 0; i < 20; i++) {
+                const span = document.createElement('span');
+                span.innerText = "🌰";
+                span.className = "falling-text";
+                span.style.left = Math.random() * 100 + "vw";
+                span.style.animationDuration = (Math.random() * 2 + 1) + "s";
+                document.body.appendChild(span);
+                setTimeout(() => span.remove(), 3000);
+            }
+            // 2. /rain 〇〇 の処理 (正規表現で分解)
+    const rainMatch = code.match(/^\/rain\s(.+)$/);
+    if (rainMatch) {
+        const emoji = rainMatch[1]; // 入力された絵文字を取得
+        alert(`${emoji} の雨を降らせるゾ！`);
+        
+        // すでに降っていたら一度止める
+        if (rainInterval) clearInterval(rainInterval);
+        
+        // 繰り返し雨を降らせる
+        rainInterval = setInterval(() => {
+            const span = document.createElement('span');
+            span.innerText = emoji;
+            span.className = "falling-text";
+            span.style.left = Math.random() * 100 + "vw";
+            span.style.animationDuration = (Math.random() * 2 + 1) + "s";
+            document.body.appendChild(span);
+            setTimeout(() => span.remove(), 3000);
+        }, 300);
+        return;
+    }
+    
+            // 雨の処理を管理するID用
+let rainInterval = null;
+            break;
+            // 【便利】自動生産量をリセット（放置しすぎた時用）
+        case "/stop":
+            cps = 0;
+            updateClickerUI();
+            alert("自動生産を停止しました。");
+            break;
+            // 【便利】どんぐりを一気に倍にする
+        case "/double":
+            acorns *= 2;
+            updateClickerUI();
+            alert("どんぐりが2倍になったゾ！");
+            break;
+            break;
+        default:
+            alert("そのコードは存在しないゾ...");
+            break;
+    }
+    inputField.value = ""; // 最後に消す
+}
+
+
+        function toggleSettings() {
+    const panel = document.getElementById('settings-panel');
+    panel.style.display = (panel.style.display === 'none') ? 'block' : 'none';
+}
+function changeBackground(color) {
+    document.body.style.backgroundColor = color;
+}
+        
+        function executeRestoreNormal() {
+    // 既存の解除コードに加え、以下を確実に追加
+    document.getElementById('eventTimerBar').style.width = '0%';
+    document.body.classList.remove('glitch-active');
+    document.body.style.filter = "none";
+    document.body.style.transform = "none";
+    
+    // イベント中フラグを確実にオフにする（新規変数が必要なら追加してください）
+    isEventActive = false; 
+
+    // 背景等のリセット
+    document.querySelectorAll('.char-section').forEach(el => {
+        el.style.backgroundColor = "";
+        el.style.borderColor = "";
+        el.style.color = "";
+    });
+}
+        let currentScene = "start";
+        const novelScript = {
+            // --- 始まりの分岐 ---
+            start: { speaker: "どんぐり", text: "淫夢中学校の朝だ。今日も平穏に遅刻しそうだゾ……。どうやって学校へ向かおう？", choices: [{text: "裏の森を全速力でダッシュする", next: "forest"}, {text: "正面の校門から堂々と遅刻する", next: "gate"}] },
+
+            // --- ルートA: 裏の森 ---
+            forest: { speaker: "カビゴン", text: "森から突然野生のカビゴンが現れた！『物理的距離感がおかしいッ！』と叫びながら物凄いスピードで迫ってくる！", choices: [{text: "オナミー警備員を大声で召喚する", next: "onami_call"}, {text: "自慢のオウム返しで対抗してみる", next: "imitation"}] },
+            onami_call: { speaker: "オナミー", text: "「勤務ご苦労さまです！」と叫ぶとオナミーが茂みから爆速で駆けつけた！しかしカビゴンはまだ止まらない！", choices: [{text: "オナミーと一緒に二人がかりで突撃する", next: "forest_fight"}, {text: "オナミーを囮にして自分だけ逃げる", next: "forest_betray"}] },
+            imitation: { speaker: "たいようさーん", text: "オウム返しを試みようとした瞬間、ゲイのたいようさーんが木の上から降ってきた！「こうじぃぃ！」と叫んでいる！", choices: [{text: "たいようさーんにカビゴンを押し付ける", next: "push_taiyo"}, {text: "二人をまとめて説得する", next: "peace_talk"}] },
+
+            // --- ルートB: 正面の校門 ---
+            gate: { speaker: "仲あら", text: "正門前で淫夢第一被害者の仲あらが仁王立ちで待ち構えていた。「いくううううう（えぐうううう）」と絶叫している！", choices: [{text: "負けじと一緒に「いくうううう！」と絶叫する", next: "scream_match"}, {text: "安全のためにステンレス大後輩の後ろに隠れる", next: "stainless_hide"}] },
+            scream_match: { speaker: "せちゅな", text: "二人の大絶叫を聞きつけて、自称・非淫夢厨のせちゅなが現れた！「ちょっと静かにして！」と怒っている。", choices: [{text: "せちゅなを仲間の淫夢厨として勧誘する", next: "recruit_setsuna"}, {text: "せちゅなに謝罪して裏口へ回る", next: "back_door"}] },
+            stainless_hide: { speaker: "ステンレス大後輩", text: "ステンレス大後輩の後ろに隠れた！しかし、彼の髪の毛（ステンレス素材）が朝日に反射して凄まじい眩しさを放ち始めた！", choices: [{text: "眩しさを利用して目くらましを仕掛ける", next: "flash_attack"}, {text: "眩しすぎて自爆する", next: "blind_fail"}] },
+
+            // --- ルートAのサブルート選択肢 ---
+            forest_fight: { speaker: "えいる", text: "戦いの衝撃で地面が割れ、地下から「金...床...？？」と呟くえいるが金槌を持って浮上してきた！危険な空気だ！", choices: [{text: "えいるに「カンカンカン」と声をかける", next: "eiru_kan"}, {text: "えいるを無視してカビゴンを殴る", next: "end_9"}] },
+            forest_betray: { speaker: "そうすげい", text: "オナミーを見捨てて逃げた先は、最近自認ゲイになったVチューバー好きのそうすげいの部屋だった。「どういうこと？」と言われる。", choices: [{text: "「どういうこと？」とオウム返しで返す", next: "end_11"}, {text: "VTuberの魅力を語って誤魔化す", next: "end_12"}] },
+            push_taiyo: { speaker: "リホー", text: "たいようさーんとカビゴンが揉めている隙に逃げると、女子一の変態リホーに遭遇！「怪しい奴発見…」と凝視される！", choices: [{text: "どんぐりを差し出して許しを請う", next: "end_13"}, {text: "リホーの変態エピソードを暴露する", next: "end_14"}] },
+            peace_talk: { speaker: "ここミー", text: "説得を試みると、せちゅなから淫夢を教わっている最中のここミーが通りかかった！「これが新しいお勉強ですか？」", choices: [{text: "「そうだ、これが英才教育だ」と教え込む", next: "end_15"}, {text: "危ないから逃げなさいと諭す", next: "end_16"}] },
+            eiru_kan: { speaker: "えいる", text: "「金口にしたな！！潰す！！」えいるの逆鱗に触れてしまった！", choices: [{text: "最後の悪あがきでディルド惑星の力を借りる", next: "end_1"}, {text: "諦めて潰される", next: "end_2"}] },
+
+            // --- ルートBのサブルート選択肢 ---
+            recruit_setsuna: { speaker: "野獣先輩", text: "せちゅなを勧誘していると、空が突然真っ暗になり、首里城の瓦礫を背負った野獣先輩が降臨した！ブレインロットの波動を感じる！", choices: [{text: "王道を征く「いいよ！こいよ！」で迎撃", next: "end_3"}, {text: "どんぐり惑星の儀式を始める", next: "end_4"}] },
+            back_door: { speaker: "ナレーション", text: "裏口へ向かうと、そこは謎の自動化工場だった。大量の自動吸引機が設置されている。", choices: [{text: "吸引機に入ってみる", next: "end_5"}, {text: "工場を破壊して脱出する", next: "end_6"}] },
+            flash_attack: { speaker: "先生", text: "まぶしい！！後ろから巡回中の先生がやってきたが、ステンレス反射光のせいで前が見えていない！大ピンチ＆大チャンス！", choices: [{text: "ステルスモード（歴史の勉強）を起動する", next: "end_7"}, {text: "光の中に紛れて教室へダッシュ", next: "end_8"}] },
+
+            // --- ☠️ 全16通りの結末 (エンディング) ☠️ ---
+            end_1: { speaker: "【END 1: 惑星激突エンド】", text: "ディルド惑星から臭え超重力が発生！えいるの金床もろとも学校がディルド惑星の藻屑と消えた。ある意味クリア！", choices: [] },
+            end_2: { speaker: "【END 2: 圧殺バッドエンド】", text: "えいるの圧倒的なカンカン攻撃の前にどんぐりは粉砕された。次からは「金」の文字に気をつけよう……。", choices: [] },
+            end_3: { speaker: "【END 3: 真・王道ハッピーエンド】", text: "野獣先輩の洗脳が解け、淫夢中学校に真の平和が訪れた！全員で「いくうううう！」と叫びながらハッピー登校！", choices: [] },
+            end_4: { speaker: "【END 4: どんぐり洗脳エンド】", text: "野獣先輩すらブレインロットを上回るどんぐり波動で洗脳！学校の生徒全員がどんぐりをクリックし続けるマシーンになった。", choices: [] },
+            end_5: { speaker: "【END 5: 出荷エンド】", text: "自動吸引機に吸い込まれ、毎秒+8のどんぐりとしてショップに出荷されてしまった。君の犠牲で放置ゲームが捗るぞ！", choices: [] },
+            end_6: { speaker: "【END 6: 工場長就任エンド】", text: "工場を乗っ取ることに成功。ディルド惑星製工場の最高経営責任者(CEO)になり、学校に行く必要がなくなった！", choices: [] },
+            end_7: { speaker: "【END 7: 模範的エデュケーションエンド】", text: "急に日本の教育と歴史について語り出した君を見て、先生は涙を流して感心した。「君こそ学生の鏡だ！」遅刻は帳消し！", choices: [] },
+            end_8: { speaker: "【END 8: 光速の遅刻エンペラー】", text: "光の速さで教室の席についたが、摩擦熱で服が全焼したためそのまま職員室に連行された。不審者エンド。", choices: [] },
+            end_9: { speaker: "【END 9: 物理的超越エンド】", text: "カビゴンを殴り倒したことで、君自身が「距離感のわからない最強生物」へと進化。淫夢中学校の新たな番長に君臨した！", choices: [] },
+            blind_fail: { speaker: "【END 10: 網膜崩壊エンド】", text: "ステンレス大後輩の頭部発光が強すぎて、自分自身の目がやられた。そのまま一歩も動けず先生に確保された。バッドエンド。", choices: [] },
+            end_11: { speaker: "【END 11: 無限ループエンド】", text: "そうすげいと「どういうこと？」「どういうこと？」と永遠に言い合い続け、朝が永遠に終わらなくなった……。", choices: [] },
+            end_12: { speaker: "【END 12: Vチューバー沼エンド】", text: "そうすげいと意気投合し、そのまま学校をサボって推しの配信を24時間同時視聴した。非常に健全でオタクな素晴らしい1日。", choices: [] },
+            end_13: { speaker: "【END 13: どんぐり貢ぎエンド】", text: "リホーはどんぐりを美味しく食べた。変態的な悪戯をされることなく見逃してもらえたが、所持どんぐりが0になった。", choices: [] },
+            end_14: { speaker: "【END 14: 学校大爆破バッド】", text: "怒ったリホーが女子たちの変態ネットワークを起動。学校中がスキャンダルに包まれ、淫夢中学校は社会的に爆破された。", choices: [] },
+            end_15: { speaker: "【END 15: 淫夢第2被害者量産エンド】", text: "ここミーは立派な淫夢厨へと育ってしまった。せちゅなが頭を抱えて絶望しているが、サイトの未来は明るい(？)", choices: [] },
+            end_16: { speaker: "【END 16: 超健全どんぐりエンド】", text: "ここミーを守りきり、一切の淫夢要素を排除した「超健全」な学生として登校完了。しかし、このゲームとしてはバッドエンド？", choices: [] }
+        };
+
+        function initNovel() { currentScene = "start"; renderNovelScene(); }
+        
+        function renderNovelScene() {
+            const scene = novelScript[currentScene];
+            if (!scene) return;
+            
+            document.getElementById('novelSpeaker').innerText = scene.speaker;
+            document.getElementById('novelText').innerText = scene.text;
+            
+            const choiceBox = document.getElementById('novelChoices');
+            choiceBox.innerHTML = "";
+            
+            // 選択肢がある場合
+            if (scene.choices && scene.choices.length > 0) {
+                scene.choices.forEach(c => {
+                    const b = document.createElement('button');
+                    b.className = 'choice-btn'; b.innerText = c.text;
+                    b.onclick = () => { currentScene = c.next; renderNovelScene(); };
+                    choiceBox.appendChild(b);
+                });
+            } else {
+                // エンディングに達した場合の案内文
+                const b = document.createElement('button');
+                b.className = 'choice-btn';
+                b.style.background = "#dc3545";
+                b.innerText = "🔄 タイトルに戻る（他の結末を探す）";
+                b.onclick = () => { initNovel(); };
+                choiceBox.appendChild(b);
+            }
+        }
+        function advanceNovel() { /* 選択肢クリックでのみ進行するため互換維持のみ */ }
+        function checkPassword() {
+            const input = document.getElementById('passInput').value;
+            const gate = document.getElementById('password-gate');
+            if (input === '6769') { gate.style.opacity = '0'; gate.style.visibility = 'hidden'; } 
+            else { alert('パスワードが違います。'); document.getElementById('passInput').value = ''; }
+        }
+        document.getElementById('passInput').addEventListener('keypress', function(e) { if (e.key === 'Enter') checkPassword(); });
+
+        function stopAllHtmlAudio() { const audios = document.querySelectorAll('audio'); audios.forEach(audio => { audio.pause(); audio.currentTime = 0; }); }
+        function playSussySound() { var audio = document.getElementById("sussyAudio"); audio.currentTime = 0; audio.play(); }
+        function Sound() { var audio = document.getElementById("Audio"); audio.currentTime = 0; audio.play(); }
+        function FunkSound() { var audio = document.getElementById("Funk"); audio.currentTime = 0; audio.play(); }
+        function Cortisol() { var audio = document.getElementById("Cortisol"); audio.currentTime = 0; audio.play(); }
+        function Fortnite() { var audio = document.getElementById("Fortnite"); audio.currentTime = 0; audio.play(); }
+        function SokinTV() { var audio = document.getElementById("SokinTV"); audio.currentTime = 0; audio.play(); }
+        function waho() { var audio = document.getElementById("waho"); audio.currentTime = 0; audio.play(); }
+        function YAJU() { var audio = document.getElementById("YAJU"); audio.currentTime = 0; audio.play(); }
+        function nyan() { var audio = document.getElementById("nyan"); audio.currentTime = 0; audio.play(); }
+        function rosia() { var audio = document.getElementById("rosia"); audio.currentTime = 0; audio.play(); }
+        function america() { var audio = document.getElementById("america"); audio.currentTime = 0; audio.play(); }
+        function doitu() { var audio = document.getElementById("doitu"); audio.currentTime = 0; audio.play(); }
+        function kado() { var audio = document.getElementById("kado"); audio.currentTime = 0; audio.play(); }
+        function YAJUU() { var audio = document.getElementById("YAJUU"); audio.currentTime = 0; audio.play(); }
+        function iknow() { var audio = document.getElementById("iknow"); audio.currentTime = 0; audio.play(); }
+        function idai() { var audio = document.getElementById("idai"); audio.currentTime = 0; audio.play(); }
+        function number() { var audio = document.getElementById("number"); audio.currentTime = 0; audio.play(); }
+        function fps() { var audio = document.getElementById("fps"); audio.currentTime = 0; audio.play(); }
+        function esk() { var audio = document.getElementById("esk"); audio.currentTime = 0; audio.play(); }
+        function air() { var audio = document.getElementById("air"); audio.currentTime = 0; audio.play(); }
+        function mom() { var audio = document.getElementById("mom"); audio.currentTime = 0; audio.play(); }
+        function omae() { var audio = document.getElementById("omae"); audio.currentTime = 0; audio.play(); }
+        function donguri() { var audio = document.getElementById("donguri"); audio.currentTime = 0; audio.play(); }
+        function holy() { var audio = document.getElementById("2fori"); audio.currentTime = 0; audio.play(); }
+        
+
+        // 背景粒子アニメーション
+        const canvas = document.getElementById('particle-canvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+        const particleCount = 40; 
+        let isParticleRunning = true;
+
+        function resizeCanvas() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        class Particle {
+            constructor() { this.reset(); this.y = Math.random() * canvas.height; }
+            reset() {
+                this.x = Math.random() * canvas.width; this.y = canvas.height + 10; 
+                this.size = Math.random() * 1.5 + 0.5; this.speedY = Math.random() * 0.5 + 0.2; 
+                this.speedX = (Math.random() - 0.5) * 0.2; this.alpha = Math.random() * 0.5 + 0.2; 
+            }
+            update() {
+                this.y -= this.speedY; this.x += this.speedX;
+                if (this.y < -10 || this.x < -10 || this.x > canvas.width + 10) this.reset();
+            }
+            draw() { ctx.fillStyle = `rgba(255, 255, 255, ${this.alpha})`; ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2); ctx.fill(); }
+        }
+        for (let i = 0; i < particleCount; i++) particles.push(new Particle());
+        function animate() {
+            if (isParticleRunning) { ctx.clearRect(0, 0, canvas.width, canvas.height); particles.forEach(p => { p.update(); p.draw(); }); }
+            requestAnimationFrame(animate);
+        }
+        animate();
+
+        // スクロール監視＆セーフモード切り替え
+        const stealthZone = document.getElementById('teacher-stealth-zone');
+       // 先生ステルス監視オブザーバーの修正
+const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        const isWhiteDisabled = document.getElementById('no-stealth-white').checked;
+        if (entry.isIntersecting) {
+            if (!isWhiteDisabled) document.body.classList.add('safe-mode');
+            isParticleRunning = false; 
+            stopEventBGM(); 
+        } else {
+            document.body.classList.remove('safe-mode');
+            isParticleRunning = true;
+        }
+    });
+}, { threshold: 0.1 });
+        observer.observe(stealthZone);
+
+        /* ==========================================
+           📡 リアルタイム通知＆制御＆20種のランダムイベント
+        ========================================== */
+        const channel = new BroadcastChannel('portal_system');
+        let eventIntervals = []; 
+        let autoEventTimer = null; /* 🔴 5分タイマー管理用オブジェクト */
+
+        // サイトが読み込まれた瞬間から、自動タイマーのカウントダウンを開始
+        startAutoEventTimer();
+        function toggleEvent() {
+    isEventEnabled = document.getElementById('event-toggle').checked;
+
+    if (!isEventEnabled) {
+        // --- ここでイベントを強制停止 ---
+        
+        // 1. タイマー（文字送りなど）を止める
+        if (currentEventTimer) {
+            clearTimeout(currentEventTimer);
+            currentEventTimer = null;
+        }
+
+        // 2. 音楽を止める
+        if (currentEventMusic) {
+            currentEventMusic.pause();
+            currentEventMusic.currentTime = 0; // 最初に戻す
+            currentEventMusic = null;
+        }
+
+        // 3. 画面の文字などを「通常」の状態に戻す
+        document.getElementById('novel-text-box').innerText = "通常モードに戻りました。";
+        console.log("イベント停止しました");
+    }
+}
+
+        /* 🔴 5分に1回自動でイベントをトリガーするタイマー設定関数 */
+        function startAutoEventTimer() {
+            if (autoEventTimer === null) {
+                autoEventTimer = setInterval(() => {
+                    triggerEventProcess();
+                }, 5 * 60 * 1000); // 5分 ＝ 300,000ミリ秒
+            }
+        }
+
+        /* 🔴 タイマーを完全に止める関数 */
+        function stopAutoEventTimer() {
+            if (autoEventTimer !== null) {
+                clearInterval(autoEventTimer);
+                autoEventTimer = null;
+            }
+        }
+
+        /* 🔴 イベントを強制発動するコア処理（リモコン・タイマー共通） */
+        function triggerEventProcess() {
+            clearCurrentEvents(); 
+            playNyanCat(); // イベント発生時は常に裏でNyan Catをループ
+            runRandomEvent();
+        }
+
+        channel.onmessage = function(event) {
+            const data = event.data;
+
+            if (data.action === 'stop_system') {
+                stopAllHtmlAudio();
+                stopAutoEventTimer(); /* 🔴 リモコンでシステムが止められたら自動タイマーもオフ */
+                document.getElementById('stop-overlay').style.display = 'flex';
+            }
+
+            if (data.action === 'resume_system') {
+                document.getElementById('stop-overlay').style.display = 'none';
+                startAutoEventTimer(); /* 🔴 リモコンでシステムが再開されたら自動タイマーもオン */
+            }
+
+            if (data.action === 'show_badge') {
+                const badgeId = 'badge-' + data.type;
+                const targetBadge = document.getElementById(badgeId);
+                if (targetBadge) {
+                    targetBadge.style.display = 'inline-block';
+                }
+            }
+
+            if (data.action === 'start_random_event') {
+                triggerEventProcess();
+            }
+
+            if (data.action === 'stop_all_events') {
+                clearCurrentEvents();
+                const banner = document.getElementById('event-banner');
+                banner.innerText = "🛑 イベント停止されました";
+                setTimeout(() => { banner.style.display = 'none'; }, 2000);
+            }
+        };
+
+        function runRandomEvent() {
+            // スクリプトの冒頭に追加
+let currentEventTimer = null; // 現在のイベントタイマーを保存する箱
+let currentEventMusic = null; // 現在流れている音楽を保存する箱
+            const eventNumber = Math.floor(Math.random() * 20) + 1;
+            const banner = document.getElementById('event-banner');
+            banner.style.display = 'block';
+
+            switch(eventNumber) {
+                case 1:
+                    banner.innerText = "イベント①：画面上下大反転！";
+                    document.body.style.transform = "rotate(180deg)";
+                    break;
+                case 2:
+                    banner.innerText = "イベント②：どんぐり大豪雨！";
+                    const timer1 = setInterval(() => {
+                        const d = document.createElement('div');
+                        d.className = 'falling-text';
+                        d.innerText = "🌰";
+                        d.style.left = Math.random() * 100 + "vw";
+                        d.style.top = "-50px";
+                        d.style.animationDuration = (Math.random() * 2 + 1) + "s";
+                        document.body.appendChild(d);
+                        setTimeout(() => d.remove(), 3000);
+                    }, 100);
+                    eventIntervals.push(timer1);
+                    break;
+                case 3:
+                    banner.innerText = "イベント③：超パーティークラブモード！";
+                    document.body.classList.add('event-party');
+                    break;
+                case 4:
+                    banner.innerText = "イベント④：全員ガイジ度カンスト！！";
+                    document.querySelectorAll('.star-stat').forEach(el => {
+                        el.innerText = "★★★★★★★★★★(神)";
+                        el.style.color = "#ff3333";
+                    });
+                    break;
+                case 5:
+                    banner.innerText = "イベント⑤：タイトルのバグ化";
+                    const timer2 = setInterval(() => {
+                        const bugs = ["淫夢国会議事堂", "カビゴン観測所", "オナミー防衛本部", "学校崩壊ポータル"];
+                        document.getElementById('main-title').innerText = bugs[Math.floor(Math.random() * bugs.length)];
+                    }, 300);
+                    eventIntervals.push(timer2);
+                    break;
+                case 6:
+                    banner.innerText = "イベント⑥：画面が突然巨大化（ズーム）";
+                    document.body.style.transform = "scale(1.5)";
+                    document.body.style.transformOrigin = "top center";
+                    break;
+                case 7:
+                    banner.innerText = "イベント⑦：激熱 Nyan Cat オンパレード";
+                    break;
+                case 8:
+                    banner.innerText = "イベント⑧：全員の名前が「どんぐり」になる";
+                    document.querySelectorAll('.char-section h2').forEach(el => {
+                        el.innerText = "俺（どんぐり）";
+                    });
+                    break;
+                case 9:
+                    banner.innerText = "イベント⑨：文字が横にブレまくる（シェイク）";
+                    const timer3 = setInterval(() => {
+                        document.body.style.paddingLeft = (Math.random() * 40 + 10) + "px";
+                    }, 50);
+                    eventIntervals.push(timer3);
+                    break;
+                case 10:
+                    banner.innerText = "イベント⑩：超高速で白い光がぶっ飛ぶ";
+                    particles.forEach(p => { p.speedY = Math.random() * 15 + 10; });
+                    break;
+                case 11:
+                    banner.innerText = "イベント⑪：世界がレトロ（セピア）に化す";
+                    document.body.classList.add('event-sepia');
+                    break;
+                case 12:
+                    banner.innerText = "イベント⑫：モノクロの悪夢（白黒モード）";
+                    document.body.classList.add('event-mono');
+                    break;
+                case 13:
+                    banner.innerText = "イベント⑬：ネガポジ反転（世界の終焉）";
+                    document.body.classList.add('event-invert');
+                    break;
+                case 14:
+                    banner.innerText = "イベント⑭：星（★）の雨が降り注ぐ！";
+                    const timer4 = setInterval(() => {
+                        const d = document.createElement('div');
+                        d.className = 'falling-text';
+                        d.innerText = "⭐";
+                        d.style.left = Math.random() * 100 + "vw";
+                        d.style.top = "-50px";
+                        d.style.animationDuration = (Math.random() * 1.5 + 0.5) + "s";
+                        document.body.appendChild(d);
+                        setTimeout(() => d.remove(), 2500);
+                    }, 80);
+                    eventIntervals.push(timer4);
+                    break;
+                case 15:
+                    banner.innerText = "イベント⑮：タイトルが斜めに荒ぶる";
+                    const timer5 = setInterval(() => {
+                        const deg = Math.floor(Math.random() * 20) - 10;
+                        document.getElementById('main-title').style.transform = `rotate(${deg}deg)`;
+                    }, 100);
+                    eventIntervals.push(timer5);
+                    break;
+                case 16:
+                    banner.innerText = "イベント⑯：ボタンが全部巨大化！";
+                    document.querySelectorAll('.box, .mega-button').forEach(el => {
+                        el.style.transform = "scale(1.25)";
+                    });
+                    break;
+                case 17:
+                    banner.innerText = "イベント⑰：説明文が全部消滅（記憶喪失）";
+                    document.querySelectorAll('.char-desc').forEach(el => {
+                        el.setAttribute('data-orig', el.innerText);
+                        el.innerText = "［データが破損しました］";
+                    });
+                    break;
+                case 18:
+                    banner.innerText = "イベント⑱：淫夢度が全員ゼロに（健全化）";
+                    document.querySelectorAll('.star-stat').forEach(el => {
+                        el.innerText = "☆☆☆☆☆(清純)";
+                        el.style.color = "#3b82f6";
+                    });
+                    break;
+                case 19:
+                    banner.innerText = "イベント⑲：画面が左へ超高速スクロール";
+                    document.body.style.transform = "translateX(-20px)";
+                    const timer6 = setInterval(() => {
+                        const currentX = document.body.style.transform.replace(/[^0-9-]/g, '') || 0;
+                        document.body.style.transform = `translateX(${(parseInt(currentX) - 5) % 100}px)`;
+                    }, 50);
+                    eventIntervals.push(timer6);
+                    break;
+                case 20:
+                    banner.innerText = "イベント⑳：カオス！背景粒子が巨大な球体に";
+                    particles.forEach(p => { p.size = Math.random() * 30 + 15; p.alpha = 0.15; });
+                    break;
+            }
+        }
+
+        function changeFilterOrBackground(value) {
+    const main = document.getElementById('main-content');
+    
+    // 一旦フィルターをリセット
+    main.classList.remove('retro-mode', 'monochrome-mode');
+    
+    if (value === 'retro') {
+        main.classList.add('retro-mode');
+    } else if (value === 'monochrome') {
+        main.classList.add('monochrome-mode');
+    } else {
+        // 背景色の変更（元の機能）
+        document.body.style.backgroundColor = value;
+    }
+}
+
+        function updateClock() {
+    const now = new Date();
+    // 各桁を2桁表示（01, 02...）にするための処理
+    const hours = String(now.getHours()).padStart(2, '0');
+    const minutes = String(now.getMinutes()).padStart(2, '0');
+    const seconds = String(now.getSeconds()).padStart(2, '0');
+    
+    // HTMLの時計表示部分を更新
+    document.getElementById('cyberClock').innerText = `${hours}:${minutes}:${seconds}`;
+}
+
+// 1秒ごとに実行するように設定
+setInterval(updateClock, 1000);
+
+// 初回実行
+updateClock();
+
+        function clearCurrentEvents() {
+            eventIntervals.forEach(clearInterval);
+            eventIntervals = [];
+
+            document.body.style.transform = "none";
+            document.body.style.paddingLeft = "20px";
+            document.body.classList.remove('event-party', 'event-sepia', 'event-mono', 'event-invert');
+
+            document.querySelectorAll('.falling-text').forEach(el => el.remove());
+            document.getElementById('main-title').innerText = "キャラクター図鑑（淫夢中学校）";
+            document.getElementById('main-title').style.transform = "none";
+            
+            document.querySelectorAll('.box, .mega-button').forEach(el => {
+                el.style.transform = "none";
+            });
+
+            document.querySelectorAll('.char-desc').forEach(el => {
+                const orig = el.getAttribute('data-orig');
+                if(orig) el.innerText = orig;
+            });
+
+            const originalStars = [
+                "★★★☆☆", "★★★☆☆", "★★☆☆☆", "★★☆☆☆", "★☆☆☆☆", "★★★☆☆", 
+                "★☆☆☆☆", "★★★★★", "★★★★★", "★★★☆☆", "☆☆☆☆☆", "☆☆☆☆☆", 
+                "★★★★★", "☆☆☆☆☆", "★☆☆☆☆", "★☆☆☆☆", "★☆☆☆☆", "★★★★☆", 
+                "★★★☆☆", "★★★★☆", "★★☆☆☆", "★★☆☆☆", "★☆☆☆☆", "☆☆☆☆☆", 
+                "★☆☆☆☆", "☆☆☆☆☆", "★★★★☆", "★★☆☆☆", "★★★★★", "☆☆☆☆☆", 
+                "★★★★★", "★☆☆☆☆", "★★☆☆☆", "☆☆☆☆☆", "★☆☆☆☆", "☆☆☆☆☆", 
+                "☆☆☆☆☆", "★★★★★", "★★★★★", "★★★★★"
+            ];
+            document.querySelectorAll('.star-stat').forEach((el, index) => {
+                if(originalStars[index]) {
+                    el.innerText = originalStars[index];
+                    el.style.color = "";
+                }
+            });
+
+            const originalNames = [
+                "カビゴン（んんし）", "たいようさーん", "あいっすけぇ（あいすけ）", "せちゅな", 
+                "金...床...？？（カンカンカン）えいる", "そうすげい", "仲あら", "ステンレス大後輩", 
+                "野獣先輩(首里城)", "オナミー", "リホー（ワホー）", "ここミー", "俺（どんぐり）"
+            ];
+            document.querySelectorAll('.char-section h2').forEach((el, index) => {
+                if(originalNames[index]) el.innerText = originalNames[index];
+            });
+
+            particles.forEach(p => { p.speedY = Math.random() * 0.5 + 0.2; p.size = Math.random() * 1.5 + 0.5; p.alpha = Math.random() * 0.5 + 0.2; });
+            stopAllHtmlAudio();
+        }
+
+        function openPage(type, url) {
+            const badgeId = 'badge-' + type;
+            const targetBadge = document.getElementById(badgeId);
+            if (targetBadge) {
+                targetBadge.style.display = 'none';
+            }
+            window.open(url, '_blank');
+        }
+
+        // どんぐりクリッカー用のシステム
+        let acorns = parseInt(localStorage.getItem('myAcorns')) || 0;
+        let cps = 0;
+        let upgCosts = [15, 100, 1145];
+        let upgPower = [1, 8, 50];
+        let upgCounts = [0, 0, 0];
+        updateClickerUI();
+
+        // アップグレードを持っている人だけ「生産量ボーナス」を適用したい場合
+function clickTarget() {
+    // どんぐりを増やす量に、現在のCPS（毎秒生産量）を足す
+    // ただし、CPSが0のときは最低1は稼げるようにします
+    let bonus = cps > 0 ? cps : 1;
+    
+    acorns += bonus; 
+    
+    updateClickerUI();
+}
+        function buyUpgrade(type) {
+            let idx = type - 1;
+ // どんぐりが足りているかチェック
+    if(acorns >= upgCosts[idx]) {
+        acorns -= upgCosts[idx];
+        upgCounts[idx]++;
+        
+        // 1. 生産力（CPS）を増やす
+        cps += upgPower[idx];
+        
+        // 2. 次の購入のためにコストを上げる (1.5倍にする)
+        upgCosts[idx] = Math.floor(upgCosts[idx] * 1.5);
+        
+        // 3. 重要：次の購入をもっと強くするために、パワー自体も強化する
+        // 例：1回買うごとに、そのアップグレードの生産力が 1.2倍 になる
+        upgPower[idx] = Math.floor(upgPower[idx] * 1.2);
+        
+        updateClickerUI();
+        console.log(`アップグレード成功！現在の生産力: ${cps}`);
+    } else {
+        alert("どんぐりが足りないゾ！");
+    }
+}
+        function updateClickerUI() {
+            document.getElementById('clickerCount').innerText = acorns;
+            document.getElementById('clickerAps').innerText = cps;
+            document.getElementById('cost1').innerText = upgCosts[0];
+            document.getElementById('cost2').innerText = upgCosts[1];
+            document.getElementById('cost3').innerText = upgCosts[2];
+        }
+        
+        setInterval(() => {
+            acorns += cps;
+            updateClickerUI();
+        }, 1000);
+
+        // 起動処理（※もしシューティングのロードがある場合の互換性維持用）
+        if (typeof initShooter === "function") { initShooter(); }
+
+    </script>
+</body>
+</html>
